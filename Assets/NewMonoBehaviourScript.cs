@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NewMonoBehaviourScript : MonoBehaviour
@@ -25,6 +26,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
         // Debug.Log("플레이어는 최대 레벨인가?");
         // Debug.Log(isMaxLevel);
 
+
         // // 2. 그룹형 변수
         // string[] monster = {"전수빈", "고종현"};
         // string boss = "권민준";
@@ -42,7 +44,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
         // {
         //     Debug.Log($"{monster[i]}은(는) {monsterLevel[i]} 레벨입니다.");
         // }
-        
+
         // List<String> effect = new List<string>();
         // effect.Add("맹독");
         // effect.Add("화상");
@@ -55,6 +57,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
         // effect.Remove("잠듦"); // 값으로 삭제
         // effect.RemoveAt(0); // 인덱스로 삭제
 
+
         // // 3. 연산자
         // int exp = 0;
         // int level = 1;
@@ -62,7 +65,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
         // exp += 1200; // 사냥으로 경험치를 획득
         // exp += 800; // 사냥으로 경험치를 획득
-        
+
         // while (exp >= (level * 100))
         // {
         //     exp -= (level * 100);
@@ -86,5 +89,66 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
         // string condition = isBadCondition ? "좋음" : "나쁨";
         // Debug.Log($"플레이어의 상태 : {isBadCondition}");
+
+
+        // 4. 키워드
+        // int float double string new List
+
+
+        // 5. 조건문
+        List<string> item = new List<string>();
+        item.Add("자동 치유 물약");
+        item.Add("자동 마나 물약");
+
+        int health = 50;
+        int mana = 50;
+        health -= 40;
+        mana -= 40;
+        bool isBadCondition = health <= 30 || mana <= 30;
+        string condition = isBadCondition ? "나쁨" : "좋음";
+
+        if (condition == "나쁨")
+        {
+            Debug.Log("플레이어의 상태가 나쁩니다! R을 눌러 아이템을 사용하세요!");
+            if (health <= 30 && item.Contains("자동 치유 물약"))
+            {
+                item.Remove("자동 치유 물약");
+                health += 20;
+                Debug.Log("자동 치유 물약이 사용됐습니다. 체력이 30 회복됐습니다.");
+            }
+            if (mana <= 30 && item.Contains("자동 마나 물약"))
+            {
+                item.Remove("자동 마나 물약");
+                mana += 10;
+                Debug.Log("자동 마나 물약이 사용됐습니다. 마나가 10 회복됐습니다.");
+            }
+        }
+        else
+        {
+            Debug.Log("플레이어의 상태가 좋습니다.");
+        }
+
+        List<string> monster = new List<string> { "프레디", "보니", "치카", "폭시", "골든 프레디" };
+        switch (monster[4])
+        {
+            case "프레디" :
+                Debug.Log("우측을 주의하세요! CCTV로 그를 찾아 움직임을 저지할 수 있습니다.");
+                break;
+            case "보니" :
+                Debug.Log("좌측을 주의하세요! 불빛을 비춰 안전한 상태인지 확인해야 합니다.");
+                break;
+            case "치카" :
+                Debug.Log("우측을 주의하세요! 불빛을 비춰 안전한 상태인지 확인해야 합니다.");
+                break;
+            case "폭시" :
+                Debug.Log("좌측을 주의하세요! 폭시가 Pirate Cove에서 완전히 벗어났다면 좌측 문을 빠르게 닫아 방어할 수 있습니다.");
+                break;
+            default :
+                Debug.Log("IT'S ME");
+                Debug.Log("IT'S ME");
+                Debug.Log("IT'S ME");
+                Debug.Log("IT'S ME");
+                break;
+        }
     }
 }
