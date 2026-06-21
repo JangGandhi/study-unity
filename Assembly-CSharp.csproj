@@ -50,6 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\NewMonoBehaviourScript.cs" />
+    <Compile Include="Assets\GoldenFreddy.cs" />
+    <Compile Include="Assets\Animatronics.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
