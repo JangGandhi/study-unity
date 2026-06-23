@@ -1,69 +1,80 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class LifeCycle : MonoBehaviour
 {
+    // // Input Manager : Old
+    // void Update()
+    // {
+    //     if (Input.anyKeyDown) // 최초 1회 실행
+    //     {
+    //         Debug.Log("플레이어가 아무 키를 눌렀습니다.");
+    //     }
+    //     if (Input.anyKey) // 누르고 있는 프레임 동안 무제한 실행
+    //     {
+    //         Debug.Log("플레이어가 아무 키를 누르고 있습니다.");
+    //     }
 
-    // 초기화 - 최초
-    void Awake() // 오브젝트를 생성할 때, 최초 1회 실행
+    //     if (Input.GetKeyDown(KeyCode.Return))
+    //     {
+    //         Debug.Log("플레이어가 Enter를 눌렀습니다.");
+    //     }
+    //     if (Input.GetKey(KeyCode.W))
+    //     {
+    //         Debug.Log("앞쪽 이동 중");
+    //     }
+    //     if (Input.GetKeyUp(KeyCode.W))
+    //     {
+    //         Debug.Log("앞쪽 이동 정지");
+    //     }
+
+    //     if (Input.GetMouseButtonDown(0)) // 0은 왼쪽, 1은 오른쪽
+    //     {
+    //         Debug.Log("레일건 목표 설정 완료.");
+    //     }
+    //     if (Input.GetMouseButton(0))
+    //     {
+    //         Debug.Log("레일건 충전 중...");
+    //     }
+    //     if (Input.GetMouseButtonUp(0))
+    //     {
+    //         Debug.Log("레일건 발사!");
+    //     }
+
+    //     if (Input.GetButton("Jump")) // 문자열은 버튼의 이름
+    //     {
+    //         Debug.Log("Ready...");
+    //     }
+    //     if (Input.GetButtonUp("Jump"))
+    //     {
+    //         Debug.Log("Go!!");
+    //     }
+    //     if (Input.GetButtonDown("Cancel"))
+    //     {
+    //         Debug.Log("FNaF였으면 바로 게임이 꺼졌을 것");
+    //     }
+    // // }
+
+    // Input System : New
+    void Update()
     {
-        Debug.Log("플레이어 데이터가 준비되었습니다."); // Cylinder가 즉시 생성되기 때문에 바로 출력
-    }
+        if ((Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame) || (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) || (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame) || (Mouse.current != null && Mouse.current.middleButton.wasPressedThisFrame) || (Mouse.current != null && Mouse.current.forwardButton.wasPressedThisFrame) || (Mouse.current != null && Mouse.current.backButton.wasPressedThisFrame)) 
+        {
+            Debug.Log("플레이어가 아무 키를 눌렀습니다.");
+        }
+        if ((Keyboard.current != null && Keyboard.current.anyKey.isPressed) || (Mouse.current != null && Mouse.current.leftButton.isPressed) || (Mouse.current != null && Mouse.current.rightButton.isPressed) || (Mouse.current != null && Mouse.current.middleButton.isPressed) || (Mouse.current != null && Mouse.current.forwardButton.isPressed) || (Mouse.current != null && Mouse.current.backButton.isPressed)) 
+        {
+            Debug.Log("플레이어가 아무 키를 누르고 있습니다.");
+        }
 
-
-    // 활성화
-    void OnEnable() // 오브젝트가 활성화될 때마다 실행, 횟수 무제한
-    {
-        Debug.Log("경비원이 출근했습니다.");
-    }
-
-
-    // 초기화 - 프레임 시작
-    void Start() // Update 시작 직전, 최초 1회 실행
-    {
-        Debug.Log("모든 애니메트로닉스가 초기화 되었습니다.");
-        Debug.Log("배터리 잔량이 100%로 설정되었습니다.");
-    }
-
-
-    // 프레임 - 물리
-    void FixedUpdate() // 물리 엔진 관련 연산 업데이트, UnityEngine이 물리 연산을 하기 전에 실행
-    {
-        // 일정한 시간 간격으로 실행, CPU를 많이 사용
-        // 0.02초에 1회 호출(1초에 50회 호출)
-        // 즉, 프레임과 상관없이 날아가고 있는 미사일, 떨어지고 있는 컵 등 시간에 따라 반드시 계산되어야 하는 물리 연산에 주로 사용
-        // 프레임이 낮아도 떨어지고 있는 컵은 같은 속도로 낙하
-        // 엘든 링 : 라단이 던진 운석의 속도 계산
-        // Debug.Log("시간이 흐르고 있습니다.");
-    }
-
-    // 프레임 - 로직
-    void Update() // 물리 연산을 제외한 나머지 주기적으로 변하는 로직을 넣을 때 사용하는 함수 
-    {
-        // 프레임에 따라 실행, 60 fps면 1초에 60회 호출
-        // 엘든 링 : 몇 프레임에 회피를 눌렀는가?
-        // Debug.Log("경비원은 문을 닫았습니다.");
-    }
-
-    // 프레임 - 후처리
-    void LateUpdate() // Update가 끝난 후 실행, Update와 실행 횟수가 동일
-    {
-        // 캐릭터를 따라가는 카메라나 후처리
-        // 엘든 링 : 운석 맞고 쓰러진 캐릭터를 따라가는 카메라
-        // Debug.Log("CCTV에 변화가 생겼을 수도 있습니다.");
-    }
-
-
-    // 비활성화
-    void OnDisable()
-    {
-        // 스크립트를 끄고 켜고 하는 건 활성화와 비활성화
-        Debug.Log("경비원이 사망했습니다.");
-    }
-
-
-    // 해체
-    void OnDestroy() // 오브젝트가 삭제될 때, 최초 1회 실행
-    {
-        Debug.Log("플레이어 데이터를 해제하였습니다.");
+        if (Keyboard.current != null && Keyboard.current.spaceKey.isPressed)
+        {
+            Debug.Log("무한한 공간 저 너머로!");
+        }
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasReleasedThisFrame)
+        {
+            Debug.Log("나는 게 아냐. 멋지게 떨어지는 거지.");
+        }
     }
 }
