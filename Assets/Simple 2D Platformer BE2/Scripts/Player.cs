@@ -7,9 +7,10 @@ public class Player : MonoBehaviour
     SpriteRenderer spriteRenderer;
     float h;
     [SerializeField] private float maxSpeed = 6.0f;
+    [SerializeField] private float jumpPower = 0.0f;
     Animator animator;
-
-    bool isButtonUp = false;
+    bool wasHorizontalReleased = false;
+    bool wasJumpPressed = false;
 
     void Awake()
     {
@@ -24,7 +25,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetButtonUp("Horizontal"))
         {
-            isButtonUp = true;
+            wasHorizontalReleased = true;
         }
         if (Input.GetButton("Horizontal"))
         {
@@ -38,6 +39,12 @@ public class Player : MonoBehaviour
         else
         {
             animator.SetBool("isWalking", true);
+        }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            wasJumpPressed = true;
+            animator.SetBool("isJumping", true);
         }
     }
 
@@ -53,10 +60,16 @@ public class Player : MonoBehaviour
             rigidbody.linearVelocity = new Vector2(-maxSpeed, rigidbody.linearVelocityY);
         }
 
-        if (isButtonUp) // 조작키에서 손을 뗐을 때 감속
+        if (wasHorizontalReleased) // 조작키에서 손을 뗐을 때 감속
         {
             rigidbody.linearVelocity = new Vector2(rigidbody.linearVelocity.normalized.x * 0.2f, rigidbody.linearVelocityY);
-            isButtonUp = false;
+            wasHorizontalReleased = false;
+        }
+
+        if (wasJumpPressed)
+        {
+            rigidbody.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            wasJumpPressed = false;
         }
     }
 }
