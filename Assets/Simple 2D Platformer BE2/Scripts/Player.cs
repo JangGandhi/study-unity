@@ -41,7 +41,7 @@ public class Player : MonoBehaviour
             animator.SetBool("isWalking", true);
         }
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && !animator.GetBool("isJumping"))
         {
             wasJumpPressed = true;
             animator.SetBool("isJumping", true);
@@ -70,6 +70,21 @@ public class Player : MonoBehaviour
         {
             rigidbody.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             wasJumpPressed = false;
+        }
+
+        // RayCast 오브젝트 검색을 위해 Ray를 쏘는 방식
+        if (rigidbody.linearVelocity.y < 0)
+        {
+            Debug.DrawRay(rigidbody.position, Vector3.down, new Color(0, 1, 0));
+            RaycastHit2D rayHit = Physics2D.Raycast(rigidbody.position, Vector2.down, 1, LayerMask.GetMask("Platform"));
+            if (rayHit.collider != null)
+            {
+                if (rayHit.distance < 0.5f)
+                {
+                    // Debug.Log(rayHit.collider.name);
+                    animator.SetBool("isJumping", false);
+                }
+            }
         }
     }
 }
