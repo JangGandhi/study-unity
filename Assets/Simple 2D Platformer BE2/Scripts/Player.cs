@@ -50,7 +50,7 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        rigidbody.AddForce(Vector2.right * h, ForceMode2D.Impulse);
+        rigidbody.AddForce(Vector2.right * h * 2, ForceMode2D.Impulse); // 경사로를 오를 수 있도록 힘을 증가
         if (rigidbody.linearVelocityX > maxSpeed) // 우측 최고 속도 제한
         {
             rigidbody.linearVelocity = new Vector2(maxSpeed, rigidbody.linearVelocityY);
