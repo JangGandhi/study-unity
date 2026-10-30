@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        Time.timeScale = 3.0f;
+        // Time.timeScale = 3.0f;
     }
     void FixedUpdate()
     {
