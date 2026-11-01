@@ -87,4 +87,30 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            OnDamaged(collision.transform.position);
+        }
+    }
+
+    void OnDamaged(Vector2 enemyPos)
+    {
+        gameObject.layer = 8;
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        int dirc = transform.position.x - enemyPos.x > 0 ? 1 : -1;
+        rigidbody.AddForce(new Vector2(dirc, 1) * 7, ForceMode2D.Impulse);
+        Debug.Log(dirc);
+
+        Invoke("OffDamaged", 3);
+    }
+
+    void OffDamaged()
+    {
+        gameObject.layer = 3;
+        spriteRenderer.color = new Color(1, 1, 1, 1);
+    }
 }
