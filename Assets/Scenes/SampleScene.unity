@@ -327,8 +327,8 @@ GameObject:
   - component: {fileID: 298473661}
   - component: {fileID: 298473663}
   m_Layer: 7
-  m_Name: Spikes
-  m_TagString: Enemy
+  m_Name: Traps
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1685,8 +1685,8 @@ GameObject:
   - component: {fileID: 647465629}
   - component: {fileID: 647465630}
   m_Layer: 7
-  m_Name: Enemy
-  m_TagString: Enemy
+  m_Name: Monster
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1763,7 +1763,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 6
+  m_Constraints: 4
 --- !u!212 &647465627
 SpriteRenderer:
   serializedVersion: 2

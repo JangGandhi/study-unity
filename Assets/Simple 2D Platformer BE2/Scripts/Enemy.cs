@@ -7,11 +7,13 @@ public class Enemy : MonoBehaviour
     public int nextMove;
     Animator animator;
     SpriteRenderer spriteRenderer;
+    BoxCollider2D collider;
     void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        collider = GetComponent<BoxCollider2D>();
         Think();
     }
     void Start()
@@ -44,11 +46,27 @@ public class Enemy : MonoBehaviour
     {
         nextMove = Random.Range(-1, 2); // -1 이상 2 미만
         Invoke("Think", Random.Range(3, 6));
-
         animator.SetInteger("WalkSpeed", nextMove);
         if (nextMove != 0) // 0일 때는 기존의 방향을 유지
         {
             spriteRenderer.flipX = nextMove == 1; // 왼쪽으로 이동 시 false, 오른쪽으로 이동 시 true
         }
+    }
+
+    public void OnDamaged()
+    {
+        CancelInvoke("Think");
+        nextMove = 0;
+        animator.SetInteger("WalkSpeed", nextMove);
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+        spriteRenderer.flipY = true;
+        collider.enabled = false;
+        rigidbody.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+        Invoke("DeActive", 3);
+    }
+
+    void DeActive()
+    {
+        gameObject.SetActive(false);
     }
 }

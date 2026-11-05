@@ -90,9 +90,16 @@ public class Player : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            OnDamaged(collision.transform.position);
+            if (collision.gameObject.tag == "Monster" && rigidbody.linearVelocityY < 0 && transform.position.y > collision.transform.position.y)
+            {
+                OnAttack(collision.transform);
+            }
+            else
+            {
+                OnDamaged(collision.transform.position);
+            }
         }
     }
 
@@ -102,8 +109,9 @@ public class Player : MonoBehaviour
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
         int dirc = transform.position.x - enemyPos.x > 0 ? 1 : -1;
-        rigidbody.AddForce(new Vector2(dirc, 2) * 7, ForceMode2D.Impulse);
-        Debug.Log(dirc);
+        rigidbody.AddForce(new Vector2(dirc, 2) * 6, ForceMode2D.Impulse);
+        animator.SetBool("isJumping", true);
+        // Debug.Log(dirc);
 
         animator.SetTrigger("DoDamaged");
         Invoke("OffDamaged", 1);
@@ -113,5 +121,12 @@ public class Player : MonoBehaviour
     {
         gameObject.layer = 3;
         spriteRenderer.color = new Color(1, 1, 1, 1);
+    }
+
+    void OnAttack(Transform enemyTransform)
+    {
+        Enemy enemy = enemyTransform.GetComponent<Enemy>();
+        enemy.OnDamaged();
+        rigidbody.AddForce(Vector2.up * 12, ForceMode2D.Impulse);
     }
 }
