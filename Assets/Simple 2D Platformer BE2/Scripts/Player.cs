@@ -102,10 +102,11 @@ public class Player : MonoBehaviour
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
         int dirc = transform.position.x - enemyPos.x > 0 ? 1 : -1;
-        rigidbody.AddForce(new Vector2(dirc, 1) * 7, ForceMode2D.Impulse);
+        rigidbody.AddForce(new Vector2(dirc, 2) * 7, ForceMode2D.Impulse);
         Debug.Log(dirc);
 
-        Invoke("OffDamaged", 3);
+        animator.SetTrigger("DoDamaged");
+        Invoke("OffDamaged", 1);
     }
 
     void OffDamaged()
