@@ -36,7 +36,7 @@ public class Enemy : MonoBehaviour
             // Debug.Log("이 너머, 낭떠러지 있다");
             nextMove *= -1; // 역방향으로
             spriteRenderer.flipX = nextMove == 1;
-            CancelInvoke();
+            CancelInvoke("Think");
             Invoke("Think", 3);
         }
         rigidbody.linearVelocity = new Vector2(nextMove, rigidbody.linearVelocity.y);

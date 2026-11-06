@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public GameManager gameManager;
     Rigidbody2D rigidbody;
     SpriteRenderer spriteRenderer;
+    CapsuleCollider2D collider;
     float h;
     [SerializeField] private float maxSpeed = 6.0f;
     [SerializeField] private float jumpPower = 0.0f;
@@ -18,6 +20,7 @@ public class Player : MonoBehaviour
         rigidbody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        collider = GetComponent<CapsuleCollider2D>();
     }
 
     void Update()
@@ -106,6 +109,8 @@ public class Player : MonoBehaviour
 
     void OnDamaged(Vector2 enemyPos)
     {
+        gameManager.HealthDown();
+        gameManager.ScoreDown();
         gameObject.layer = 8;
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
@@ -115,7 +120,10 @@ public class Player : MonoBehaviour
         // Debug.Log(dirc);
 
         animator.SetTrigger("DoDamaged");
-        Invoke("OffDamaged", 1);
+        if (gameManager.health > 0)
+        {
+            Invoke("OffDamaged", 1);
+        }
     }
 
     void OffDamaged()
@@ -128,6 +136,7 @@ public class Player : MonoBehaviour
     {
         Enemy enemy = enemyTransform.GetComponent<Enemy>();
         enemy.OnDamaged();
+        gameManager.stageScore += 100;
         rigidbody.AddForce(Vector2.up * 12, ForceMode2D.Impulse);
     }
 
@@ -139,10 +148,13 @@ public class Player : MonoBehaviour
             switch (itemTag)
             {
                 case "Bronze":
+                    gameManager.stageScore += 50;
                     break;
                 case "Silver":
+                    gameManager.stageScore += 100;
                     break;
                 case "Gold":
+                    gameManager.stageScore += 300;
                     break;
                 default:
                     break;
@@ -152,8 +164,16 @@ public class Player : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Finish"))
         {
-            Debug.Log("Finish");
+            gameManager.NextStage();
             collision.gameObject.SetActive(false);
         }
+    }
+
+    public void OnDie()
+    {
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+        spriteRenderer.flipY = true;
+        collider.enabled = false;
+        rigidbody.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
     }
 }
