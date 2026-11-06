@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEditor;
 using UnityEngine;
 
@@ -128,5 +129,31 @@ public class Player : MonoBehaviour
         Enemy enemy = enemyTransform.GetComponent<Enemy>();
         enemy.OnDamaged();
         rigidbody.AddForce(Vector2.up * 12, ForceMode2D.Impulse);
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Item"))
+        {
+            string itemTag = collision.gameObject.tag;
+            switch (itemTag)
+            {
+                case "Bronze":
+                    break;
+                case "Silver":
+                    break;
+                case "Gold":
+                    break;
+                default:
+                    break;
+            }
+            collision.gameObject.SetActive(false);
+        }
+
+        if (collision.gameObject.CompareTag("Finish"))
+        {
+            Debug.Log("Finish");
+            collision.gameObject.SetActive(false);
+        }
     }
 }
