@@ -8,12 +8,13 @@ public class Player : MonoBehaviour
     Rigidbody2D rigidbody;
     SpriteRenderer spriteRenderer;
     CapsuleCollider2D collider;
+    Animator animator;
     float h;
     [SerializeField] private float maxSpeed = 6.0f;
     [SerializeField] private float jumpPower = 0.0f;
-    Animator animator;
     bool wasHorizontalReleased = false;
     bool wasJumpPressed = false;
+    bool isInputEnabled = true;
 
     void Awake()
     {
@@ -25,15 +26,24 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        h = Input.GetAxisRaw("Horizontal");
+        if (isInputEnabled)
+        {
+            h = Input.GetAxisRaw("Horizontal");
 
-        if (Input.GetButtonUp("Horizontal"))
-        {
-            wasHorizontalReleased = true;
-        }
-        if (Input.GetButton("Horizontal"))
-        {
-            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+            if (Input.GetButtonUp("Horizontal"))
+            {
+                wasHorizontalReleased = true;
+            }
+            if (Input.GetButton("Horizontal"))
+            {
+                spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+            }
+
+            if (Input.GetButtonDown("Jump") && !animator.GetBool("isJumping"))
+            {
+                wasJumpPressed = true;
+                animator.SetBool("isJumping", true);
+            }
         }
 
         if (Mathf.Abs(rigidbody.linearVelocity.x) < 0.3f)
@@ -43,12 +53,6 @@ public class Player : MonoBehaviour
         else
         {
             animator.SetBool("isWalking", true);
-        }
-
-        if (Input.GetButtonDown("Jump") && !animator.GetBool("isJumping"))
-        {
-            wasJumpPressed = true;
-            animator.SetBool("isJumping", true);
         }
     }
 
@@ -76,8 +80,7 @@ public class Player : MonoBehaviour
             wasJumpPressed = false;
         }
 
-        // RayCast 오브젝트 검색을 위해 Ray를 쏘는 방식
-        if (rigidbody.linearVelocity.y < 0)
+        if (rigidbody.linearVelocity.y < 0) // RayCast 오브젝트 검색을 위해 Ray를 쏘는 방식
         {
             Debug.DrawRay(rigidbody.position, Vector3.down, new Color(0, 1, 0));
             RaycastHit2D rayHit = Physics2D.Raycast(rigidbody.position, Vector2.down, 1, LayerMask.GetMask("Platform"));
@@ -85,7 +88,6 @@ public class Player : MonoBehaviour
             {
                 if (rayHit.distance < 0.5f)
                 {
-                    // Debug.Log(rayHit.collider.name);
                     animator.SetBool("isJumping", false);
                 }
             }
@@ -96,9 +98,9 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            if (collision.gameObject.tag == "Monster" && rigidbody.linearVelocityY < 0 && transform.position.y > collision.transform.position.y)
+            if (collision.gameObject.tag == "Monster" && rigidbody.linearVelocityY < 0 && transform.position.y > collision.transform.position.y) // Collision의 tag가 Monster면서 Player가 Collision보다 위에서 떨어졌을 경우
             {
-                OnAttack(collision.transform);
+                OnAttack(collision.transform); // Player의 공격으로 간주
             }
             else
             {
@@ -109,20 +111,25 @@ public class Player : MonoBehaviour
 
     void OnDamaged(Vector2 enemyPos)
     {
+        gameObject.layer = LayerMask.NameToLayer("PlayerDamaged"); // Player를 공격받은 상태로 변경
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
         gameManager.HealthDown();
         gameManager.ScoreDown();
-        gameObject.layer = 8;
-        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
-        int dirc = transform.position.x - enemyPos.x > 0 ? 1 : -1;
-        rigidbody.AddForce(new Vector2(dirc, 2) * 6, ForceMode2D.Impulse);
-        animator.SetBool("isJumping", true);
-        // Debug.Log(dirc);
-
-        animator.SetTrigger("DoDamaged");
-        if (gameManager.health > 0)
+        if (gameManager.health > 0) // Player의 체력이 남아 있는 경우
         {
-            Invoke("OffDamaged", 1);
+            int dirc = transform.position.x - enemyPos.x > 0 ? 1 : -1;
+            rigidbody.AddForce(new Vector2(dirc * 2, 1) * 16, ForceMode2D.Impulse);
+            animator.SetBool("isJumping", true);
+            animator.SetTrigger("DoDamaged");
+            Invoke("OffDamaged", 1); // 1초 뒤 공격받은 상태를 해제
+        }
+        else // Player의 체력이 남아 있지 않은 경우
+        {
+            isInputEnabled = false;
+            spriteRenderer.flipY = true;
+            collider.enabled = false;
+            rigidbody.AddForce(Vector2.up * 16, ForceMode2D.Impulse);
         }
     }
 
@@ -132,29 +139,29 @@ public class Player : MonoBehaviour
         spriteRenderer.color = new Color(1, 1, 1, 1);
     }
 
-    void OnAttack(Transform enemyTransform)
+    void OnAttack(Transform enemyTransform) // Player의 공격
     {
         Enemy enemy = enemyTransform.GetComponent<Enemy>();
         enemy.OnDamaged();
-        gameManager.stageScore += 100;
-        rigidbody.AddForce(Vector2.up * 12, ForceMode2D.Impulse);
+        gameManager.ScoreUp(100);
+        rigidbody.AddForce(Vector2.up * 16, ForceMode2D.Impulse);
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Item"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Item")) // Player가 Item을 획득
         {
             string itemTag = collision.gameObject.tag;
             switch (itemTag)
             {
                 case "Bronze":
-                    gameManager.stageScore += 50;
+                    gameManager.ScoreUp(50);
                     break;
                 case "Silver":
-                    gameManager.stageScore += 100;
+                    gameManager.ScoreUp(100);
                     break;
                 case "Gold":
-                    gameManager.stageScore += 300;
+                    gameManager.ScoreUp(300);
                     break;
                 default:
                     break;
@@ -162,18 +169,10 @@ public class Player : MonoBehaviour
             collision.gameObject.SetActive(false);
         }
 
-        if (collision.gameObject.CompareTag("Finish"))
+        if (collision.gameObject.CompareTag("Finish")) // Player가 Finish에 도착
         {
             gameManager.NextStage();
             collision.gameObject.SetActive(false);
         }
-    }
-
-    public void OnDie()
-    {
-        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
-        spriteRenderer.flipY = true;
-        collider.enabled = false;
-        rigidbody.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
     }
 }

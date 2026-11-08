@@ -4,10 +4,11 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     Rigidbody2D rigidbody;
-    public int nextMove;
     Animator animator;
     SpriteRenderer spriteRenderer;
     BoxCollider2D collider;
+    public int nextMove;
+
     void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
@@ -16,32 +17,24 @@ public class Enemy : MonoBehaviour
         collider = GetComponent<BoxCollider2D>();
         Think();
     }
-    void Start()
-    {
 
-    }
-
-    void Update()
-    {
-        // Time.timeScale = 3.0f;
-    }
     void FixedUpdate()
     {
-        // 낭떠러지의 시간이다
         Vector2 frontVec = new Vector2(rigidbody.position.x + (nextMove * 0.5f), rigidbody.position.y);
         Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0)); // Ray로 한 수 앞 위치의 바닥 확인
         RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector2.down, 1, LayerMask.GetMask("Platform"));
-        if (rayHit.collider == null) // 바닥이 없을 경우
+
+        if (rayHit.collider == null) // 바닥이 없다?!
         {
-            // Debug.Log("이 너머, 낭떠러지 있다");
-            nextMove *= -1; // 역방향으로
+            nextMove *= -1; // 반대 방향으로 설정
             spriteRenderer.flipX = nextMove == 1;
             CancelInvoke("Think");
             Invoke("Think", 3);
         }
+        
         rigidbody.linearVelocity = new Vector2(nextMove, rigidbody.linearVelocity.y);
-
     }
+
     void Think()
     {
         nextMove = Random.Range(-1, 2); // -1 이상 2 미만
@@ -55,9 +48,11 @@ public class Enemy : MonoBehaviour
 
     public void OnDamaged()
     {
-        CancelInvoke("Think");
-        nextMove = 0;
+        CancelInvoke("Think"); // 이제 그만 생각해
+
+        nextMove = 0; // 이제 그만 움직여
         animator.SetInteger("WalkSpeed", nextMove);
+
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
         spriteRenderer.flipY = true;
         collider.enabled = false;

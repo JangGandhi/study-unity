@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Enemy_Wait
+  m_Name: Monster_Walk
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,13 +21,13 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 139168247, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
+      value: {fileID: 410775418, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
     - time: 0.083333336
-      value: {fileID: -630687921, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
+      value: {fileID: -1446257776, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
     - time: 0.16666667
-      value: {fileID: -246117797, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
+      value: {fileID: 2137349544, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
     - time: 0.25
-      value: {fileID: 394134145, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
+      value: {fileID: 64858615, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -50,10 +50,10 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 139168247, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
-    - {fileID: -630687921, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
-    - {fileID: -246117797, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
-    - {fileID: 394134145, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
+    - {fileID: 410775418, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
+    - {fileID: -1446257776, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
+    - {fileID: 2137349544, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
+    - {fileID: 64858615, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
