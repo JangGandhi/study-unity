@@ -86,7 +86,7 @@ public class Player : MonoBehaviour
             RaycastHit2D rayHit = Physics2D.Raycast(rigidbody.position, Vector2.down, 1, LayerMask.GetMask("Platform"));
             if (rayHit.collider != null)
             {
-                if (rayHit.distance < 0.5f)
+                if (rayHit.distance < 0.8f)
                 {
                     animator.SetBool("isJumping", false);
                 }
@@ -175,4 +175,10 @@ public class Player : MonoBehaviour
             collision.gameObject.SetActive(false);
         }
     }
+
+    public void RepositionPlayer()
+    {
+        rigidbody.linearVelocity = Vector2.zero;
+        transform.position = new Vector2(-3.5f, 4.5f);
+   }
 }

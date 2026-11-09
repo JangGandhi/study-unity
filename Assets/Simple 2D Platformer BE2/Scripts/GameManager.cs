@@ -7,12 +7,25 @@ public class GameManager : MonoBehaviour
     public int totalScore;
     public int stageIndex;
     public int health;
+    public GameObject[] stages;
 
     public void NextStage()
     {
         stageIndex++;
         totalScore += stageScore;
         stageScore = 0;
+
+        if (stageIndex < stages.Length)
+        {
+            stages[stageIndex - 1].SetActive(false);
+            stages[stageIndex].SetActive(true);
+            player.RepositionPlayer();
+        }
+        else
+        {
+            Time.timeScale = 0;
+            Debug.Log("게임 클리어!");
+        }
     }
 
     public void HealthDown()
@@ -40,8 +53,7 @@ public class GameManager : MonoBehaviour
             HealthDown();
             if (health > 0)
             {
-                collision.attachedRigidbody.linearVelocity = Vector2.zero;
-                collision.transform.position = new Vector2(-3.5f, 4.5f); // 시작 지점으로 이동
+                player.RepositionPlayer();
             }
         }
     }

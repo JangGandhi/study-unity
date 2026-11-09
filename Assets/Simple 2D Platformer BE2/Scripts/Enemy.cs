@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour
     Rigidbody2D rigidbody;
     Animator animator;
     SpriteRenderer spriteRenderer;
-    BoxCollider2D collider;
+    CapsuleCollider2D collider;
     public int nextMove;
 
     void Awake()
@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
         rigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        collider = GetComponent<BoxCollider2D>();
+        collider = GetComponent<CapsuleCollider2D>();
         Think();
     }
 
@@ -31,7 +31,6 @@ public class Enemy : MonoBehaviour
             CancelInvoke("Think");
             Invoke("Think", 3);
         }
-        
         rigidbody.linearVelocity = new Vector2(nextMove, rigidbody.linearVelocity.y);
     }
 
