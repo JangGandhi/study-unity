@@ -1,4 +1,7 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,6 +11,16 @@ public class GameManager : MonoBehaviour
     public int stageIndex;
     public int health;
     public GameObject[] stages;
+    public Image[] lifes;
+    public TextMeshProUGUI stageIndexOutput;
+    public TextMeshProUGUI scoreOutput;
+    public Button continueButton;
+
+    void Update()
+    {
+        stageIndexOutput.text = $"STAGE {stageIndex + 1}";
+        scoreOutput.text = $"{totalScore + stageScore:000000}";
+    }
 
     public void NextStage()
     {
@@ -24,13 +37,21 @@ public class GameManager : MonoBehaviour
         else
         {
             Time.timeScale = 0;
-            Debug.Log("게임 클리어!");
+            TextMeshProUGUI buttonText = continueButton.GetComponentInChildren<TextMeshProUGUI>();
+            buttonText.text = "Retry?";
+            continueButton.gameObject.SetActive(true);
         }
     }
 
     public void HealthDown()
     {
         health--;
+        lifes[health].color = new Color(1, 1, 1, 0.4f);
+        if (health == 0)
+        {
+            continueButton.gameObject.SetActive(true);
+        }
+
     }
 
     public void ScoreUp(int score)
@@ -56,5 +77,11 @@ public class GameManager : MonoBehaviour
                 player.RepositionPlayer();
             }
         }
+    }
+
+    public void Restart()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(0);
     }
 }
