@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            stageIndex--;
             Time.timeScale = 0;
             TextMeshProUGUI buttonText = continueButton.GetComponentInChildren<TextMeshProUGUI>();
             buttonText.text = "Retry?";
@@ -71,10 +72,14 @@ public class GameManager : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player")) // Player가 떨어져 죽었을 경우
         {
-            HealthDown();
-            if (health > 0)
+            if (health - 1 > 0)
             {
+                HealthDown();
                 player.RepositionPlayer();
+            }
+            else
+            {
+                player.OnDie();
             }
         }
     }

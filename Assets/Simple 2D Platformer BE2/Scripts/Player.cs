@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,12 +10,20 @@ public class Player : MonoBehaviour
     SpriteRenderer spriteRenderer;
     CapsuleCollider2D collider;
     Animator animator;
+    AudioSource audioSource;
     float h;
     [SerializeField] private float maxSpeed = 6.0f;
     [SerializeField] private float jumpPower = 0.0f;
     bool wasHorizontalReleased = false;
     bool wasJumpPressed = false;
     bool isInputEnabled = true;
+    public AudioClip audioJump;
+    public AudioClip audioAttack;
+    public AudioClip audioDamaged;
+    public AudioClip audioItem;
+    public AudioClip audioDie;
+    public AudioClip audioFinish;
+
 
     void Awake()
     {
@@ -22,6 +31,7 @@ public class Player : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         collider = GetComponent<CapsuleCollider2D>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -77,6 +87,7 @@ public class Player : MonoBehaviour
         if (wasJumpPressed)
         {
             rigidbody.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            PlayAudio("JUMP");
             wasJumpPressed = false;
         }
 
@@ -111,25 +122,23 @@ public class Player : MonoBehaviour
 
     void OnDamaged(Vector2 enemyPos)
     {
-        gameObject.layer = LayerMask.NameToLayer("PlayerDamaged"); // Player를 공격받은 상태로 변경
-        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
-        gameManager.HealthDown();
-        gameManager.ScoreDown();
-
-        if (gameManager.health > 0) // Player의 체력이 남아 있는 경우
+        if (gameManager.health - 1 > 0) // Player의 체력이 남아 있는 경우
         {
+            gameManager.HealthDown();
+            gameManager.ScoreDown();
+            gameObject.layer = LayerMask.NameToLayer("PlayerDamaged"); // Player를 공격받은 상태로 변경
+            spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
             int dirc = transform.position.x - enemyPos.x > 0 ? 1 : -1;
             rigidbody.AddForce(new Vector2(dirc * 2, 1) * 16, ForceMode2D.Impulse);
             animator.SetBool("isJumping", true);
             animator.SetTrigger("DoDamaged");
             Invoke("OffDamaged", 1); // 1초 뒤 공격받은 상태를 해제
+            PlayAudio("DAMAGED");
         }
         else // Player의 체력이 남아 있지 않은 경우
         {
-            isInputEnabled = false;
-            spriteRenderer.flipY = true;
-            collider.enabled = false;
-            rigidbody.AddForce(Vector2.up * 16, ForceMode2D.Impulse);
+            OnDie();
         }
     }
 
@@ -145,6 +154,22 @@ public class Player : MonoBehaviour
         enemy.OnDamaged();
         gameManager.ScoreUp(100);
         rigidbody.AddForce(Vector2.up * 16, ForceMode2D.Impulse);
+        PlayAudio("ATTACK");
+    }
+    public void OnDie()
+    {
+        gameManager.HealthDown();
+        gameManager.ScoreDown();
+
+        gameObject.layer = LayerMask.NameToLayer("PlayerDamaged"); // Player를 공격받은 상태로 변경
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        isInputEnabled = false;
+        spriteRenderer.flipY = true;
+        collider.enabled = false;
+        rigidbody.AddForce(Vector2.up * 16, ForceMode2D.Impulse);
+        animator.speed = 0;
+        PlayAudio("DIE");
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -167,12 +192,14 @@ public class Player : MonoBehaviour
                     break;
             }
             collision.gameObject.SetActive(false);
+            PlayAudio("ITEM");
         }
 
         if (collision.gameObject.CompareTag("Finish")) // Player가 Finish에 도착
         {
             gameManager.NextStage();
             collision.gameObject.SetActive(false);
+            PlayAudio("FINISH");
         }
     }
 
@@ -180,5 +207,47 @@ public class Player : MonoBehaviour
     {
         rigidbody.linearVelocity = Vector2.zero;
         transform.position = new Vector2(-3.5f, 4.5f);
-   }
+    }
+
+    void PlayAudio(string name)
+    {
+        switch (name)
+        {
+            case "JUMP":
+                {
+                    audioSource.clip = audioJump;
+                    break;
+                }
+            case "ATTACK":
+                {
+                    audioSource.clip = audioAttack;
+                    break;
+                }
+            case "DAMAGED":
+                {
+                    audioSource.clip = audioDamaged;
+                    break;
+                }
+            case "ITEM":
+                {
+                    audioSource.clip = audioItem;
+                    break;
+                }
+            case "DIE":
+                {
+                    audioSource.clip = audioDie;
+                    break;
+                }
+            case "FINISH":
+                {
+                    audioSource.clip = audioFinish;
+                    break;
+                }
+            default:
+                {
+                    break;
+                }
+        }
+        audioSource.Play();
+    }
 }
